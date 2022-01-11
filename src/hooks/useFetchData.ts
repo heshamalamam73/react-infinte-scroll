@@ -12,27 +12,29 @@ const useFetchData = (query: string, page: number = 1) => {
   }, [query]);
 
   useEffect(() => {
-    setLoading(true);
-    setError(false);
-    let cancelToken;
-    axios({
-      method: "GET",
-      url: `https://openlibrary.org/search.json?page=${page}&q=${query}`,
-      cancelToken: new axios.CancelToken((c) => (cancelToken = c))
-    })
-      .then((res) => {
-        setBooks((prevBooks) => {
-          return [
-            ...new Set([...prevBooks, ...res.data.docs.map((b) => b.title)])
-          ];
-        });
-        setLoading(false);
-        setHasMore(res.data.docs.length > 0);
+    if (query) {
+      setLoading(true);
+      setError(false);
+      let cancelToken;
+      axios({
+        method: "GET",
+        url: `https://openlibrary.org/search.json?page=${page}&q=${query}`,
+        cancelToken: new axios.CancelToken((c) => (cancelToken = c))
       })
-      .catch((err) => {
-        if (axios.isCancel(err)) return;
-      });
-    return () => cancelToken();
+        .then((res) => {
+          setBooks((prevBooks) => {
+            return [
+              ...new Set([...prevBooks, ...res.data.docs.map((b) => b.title)])
+            ];
+          });
+          setLoading(false);
+          setHasMore(res.data.docs.length > 0);
+        })
+        .catch((err) => {
+          if (axios.isCancel(err)) return;
+        });
+      return () => cancelToken();
+    }
   }, [query, page]);
 
   return { books, loading, hasMore, success, error };

@@ -31,9 +31,15 @@ const List = () => {
     },
     [hasMore, loading]
   );
-  console.log(hasMore);
+
   const handleChangeQuery = (e: any) => {
     setQuery(e.target.value);
+  };
+  const listitem = {
+    border: "1px solid #eee",
+    listStyle: "none",
+    marginBottom: 10,
+    padding: 10
   };
 
   return (
@@ -47,17 +53,25 @@ const List = () => {
       />
       {loading && <div> ....loading </div>}
       {error && <div> ....error </div>}
-      {books &&
-        books.map((book, index) => {
-          return books.length === index + 1 ? (
-            <li key={index} ref={lastItemRef}>
-              {" "}
-              {book}
-            </li>
-          ) : (
-            <li key={index}>{book}</li>
-          );
-        })}
+      {books && (
+        <ul>
+          {books.map((book, index) => {
+            return books.length === index + 1 ? (
+              <li style={listitem} key={index} ref={lastItemRef}>
+                {" "}
+                {book}
+              </li>
+            ) : (
+              <li key={index} style={listitem}>
+                {book}
+              </li>
+            );
+          })}
+          {loading && books.length > 1 && (
+            <li style={listitem}>Loading .....</li>
+          )}
+        </ul>
+      )}
     </div>
   );
 };
